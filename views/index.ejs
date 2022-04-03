@@ -17,40 +17,9 @@
     <%- include('nav.html') %>
     <!-- -> nva.html 파일을 컴포넌트화 시킵니다 -->
 
-    <div class="container">
-    <h2 class="my-4 text-center">서버에서 가져온 할일 리스트</h2>
-        <ul class="list-group">
-            <% for (var i=0; i<posts.length; i++) { %>
-                <li class="list-group-item">
-                    <h4> 할일 제목 : <%= posts[i].제목 %>
-                    </h4>
-                    <!-- <&= 변수이름 &> 는 서버 데이터를 ejs파일에 바인딩하는 node 문법임  
-                만약 react나 vue를 사용한다면 axios로 action받아서 스토어 데이터 바인딩해도 됨-->
-                    <p> 할일 마감날짜 : <%= posts[i].날짜 %>
-                    </p>
-                    <button class="btn btn-danger delete" data-id="<%= posts[i]._id %>">삭제</button>
-                </li>
-            <% } %>
-        </ul>
-    </div>
-
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-
-    <script>
-        $('.delete').click(function (e) {
-            var postNum = e.target.dataset.id;
-            var postDelete = $(this);
-            $.ajax({
-                method: 'DELETE',
-                url: '/delete',
-                data: { _id: postNum },
-            }).done(function (result) {
-                console.log('전송 완료');
-                postDelete.parent('li').fadeOut();
-            });
-        });
-
-    </script>
+    <h2>
+        홈입니다.
+    </h2>
 
     <!-- Optional JavaScript; choose one of the two! -->
 

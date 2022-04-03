@@ -6,6 +6,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const MongoClient = require('mongodb').MongoClient;
 app.set('view engine', 'ejs');
 // html이 아닌 ejs로 파일명을 바꿔주면 서버데이터를 html에 바인딩 가능
+app.use('/public', express.static('public'));
+// staic 파일(데이터 변경에 영향을 받지 않는 파일 ex.css파일)을 보관하기 위해 public 파일을 사용할 거라고 선언
 
 var db;
 MongoClient.connect('mongodb+srv://aacz1203:asd88445522@cluster0.1aaxe.mongodb.net/TodoApp?retryWrites=true&w=majority', { useUnifiedTopology: true }, function (error, client) {
@@ -21,20 +23,22 @@ MongoClient.connect('mongodb+srv://aacz1203:asd88445522@cluster0.1aaxe.mongodb.n
     });
 });
 
-app.get('/pet', function (req, res) {
-    res.send('펫용품 쇼핑할 수 있는 사이트입니다.');
-});
+// app.get('/pet', function (req, res) {
+//     res.send('펫용품 쇼핑할 수 있는 사이트입니다.');
+// });
 
-app.get('/beauty', function (req, res) {
-    res.send('펫용품 쇼핑할 수 있는 사이트입니다.');
-});
+// app.get('/beauty', function (req, res) {
+//     res.send('펫용품 쇼핑할 수 있는 사이트입니다.');
+// });
 
 app.get('/', function (req, res) {
-    res.sendFile(__dirname + '/index.html');
+    // res.sendFile(__dirname + '/index.ejs');
+    res.render('index.ejs');
 });
 
 app.get('/write', function (req, res) {
-    res.sendFile(__dirname + '/write.html');
+    // res.sendFile(__dirname + '/write.ejs');
+    res.render('write.ejs');
 });
 
 app.post('/add', function (req, res) {
@@ -64,9 +68,23 @@ app.get('/list', function (req, res) {
 });
 
 app.delete('/delete', function(req, res){
-    console.log(req.body)
+    console.log(req.body);
     req.body._id = parseInt(req.body._id);
     db.collection('POST').deleteOne(req.body, function(error, result){
         console.log('삭제완료');
-    })
-})
+        res.status(200).send({message : '성공했습니다'});
+        // 실제로 요청이 성공했는지를 알려줘야지 list.ejs에서 요청 반응을 함
+        // 그렇기에 ejs랑 호환을 하려면 서버쪽에서 요청 성공이 했는지 알려주는 것이 중요함
+    });
+});
+
+
+app.get('/detail/:id', function(req, res){
+    db.collection('POST').findOne({_id : parseInt(req.params.id)}, function(error, result){
+        // 뭔가 오류가 난다면 보내는 데이터나 받는 데이터의 형태가 스트링인지 정수인지 확인해보기
+        console.log('result');
+        res.render('detail.ejs', { data : result });
+        // res.status(400).send('페이지를 찾을 수 없습니다.');
+        // 없는 _id로 파라미터 요청 시, 에러 페이지를 띄워줌.
+    });
+}); 
