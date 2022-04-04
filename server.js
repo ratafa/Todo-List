@@ -8,6 +8,10 @@ app.set('view engine', 'ejs');
 // html이 아닌 ejs로 파일명을 바꿔주면 서버데이터를 html에 바인딩 가능
 app.use('/public', express.static('public'));
 // staic 파일(데이터 변경에 영향을 받지 않는 파일 ex.css파일)을 보관하기 위해 public 파일을 사용할 거라고 선언
+const methodOverride = require('method-override');
+app.use(methodOverride('_method'));
+app.set('view engine', 'ejs');
+
 
 var db;
 MongoClient.connect('mongodb+srv://aacz1203:asd88445522@cluster0.1aaxe.mongodb.net/TodoApp?retryWrites=true&w=majority', { useUnifiedTopology: true }, function (error, client) {
@@ -19,7 +23,7 @@ MongoClient.connect('mongodb+srv://aacz1203:asd88445522@cluster0.1aaxe.mongodb.n
     // });
 
     app.listen(8080, function () {
-        console.log('listening on 8080')
+        console.log('서버에 연결되었습니다.')
     });
 });
 
@@ -32,8 +36,10 @@ MongoClient.connect('mongodb+srv://aacz1203:asd88445522@cluster0.1aaxe.mongodb.n
 // });
 
 app.get('/', function (req, res) {
-    // res.sendFile(__dirname + '/index.ejs');
+    // res.sendFile(__dirname + '/index.html');
+    // html 파일을 서버에 연결시킬 때는 sendFile을 사용
     res.render('index.ejs');
+    // ejs 파일을 서버에 연결시킬 떄는 render을 사용
 });
 
 app.get('/write', function (req, res) {
@@ -88,3 +94,11 @@ app.get('/detail/:id', function(req, res){
         // 없는 _id로 파라미터 요청 시, 에러 페이지를 띄워줌.
     });
 }); 
+
+app.get('/edit/:id', function (req, res) {
+    // res.sendFile(__dirname + '/write.ejs');
+    db.collection('POST').findOne({_id : parseInt(req.params.id)}, function (error, result) {
+        console.log(result)
+        res.render('edit.ejs', { post : result });
+    });
+});
