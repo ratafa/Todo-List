@@ -59,6 +59,7 @@
             $('#search').click(function(){
                 var findInput = $('#search-input').val();
                 window.location.replace(`/search?value=${findInput}`);
+                // url에 백틱 사용시, 글자 사이에 띄어쓰기를 쓰면 안된다! 
             });
         </script>
         <!-- Optional JavaScript; choose one of the two! -->
